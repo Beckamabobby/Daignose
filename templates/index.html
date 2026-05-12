@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Daignose — submit a case{% endblock %}
+{% block content %}
+
+<header class="hero">
+  <p class="kicker">DAIGNOSE</p>
+  <h1>Anonymized cases for studying<br/>diagnostic bias across populations.</h1>
+  <p class="lede">
+    Each submission records a patient's demographics, the symptoms presented, the human
+    diagnosis, the AI diagnosis (with model and confidence), and the final confirmed
+    diagnosis. No identifying information is collected. Aggregated data can be exported
+    for statistical analysis.
+  </p>
+  <p class="count">{{ count }} case{{ '' if count == 1 else 's' }} recorded</p>
+</header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}
+    <div class="flash flash-{{ cat }}">{{ msg }}</div>
+  {% endfor %}
+{% endwith %}
+
+<form action="{{ url_for('submit') }}" method="post" class="form">
+
+  <fieldset>
+    <legend><span class="num">01</span> Submitter</legend>
+    <div class="row">
+      <label>
+        <span>Your role</span>
+        <select name="submitter_role" required>
+          <option value="">Select…</option>
+          {% for r in role_options %}<option value="{{ r }}">{{ r|capitalize }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="num">02</span> Patient demographics</legend>
+    <p class="hint">Use the standardized categories. These are required to study disparities.</p>
+    <div class="row two">
+      <label>
+        <span>Race</span>
+        <select name="patient_race" required>
+          <option value="">Select…</option>
+          {% for r in race_options %}<option value="{{ r }}">{{ r }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>
+        <span>Ethnicity</span>
+        <select name="patient_ethnicity">
+          <option value="">Select…</option>
+          {% for e in ethnicity_options %}<option value="{{ e }}">{{ e }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="row two">
+      <label>
+        <span>Age band</span>
+        <select name="patient_age_band" required>
+          <option value="">Select…</option>
+          {% for a in age_bands %}<option value="{{ a }}">{{ a }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>
+        <span>Sex</span>
+        <select name="patient_sex">
+          <option value="">Select…</option>
+          {% for s in sex_options %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="num">03</span> Presentation</legend>
+    <label>
+      <span>Symptoms presented</span>
+      <textarea name="symptoms" rows="3" placeholder="e.g. Persistent cough, fatigue, low-grade fever for 3 weeks" required></textarea>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="num">04</span> Human diagnosis</legend>
+    <div class="row two-thirds">
+      <label>
+        <span>Diagnosis</span>
+        <input type="text" name="human_diagnosis" placeholder="e.g. Community-acquired pneumonia" />
+      </label>
+      <label>
+        <span>Confidence (0–1 or 0–100)</span>
+        <input type="number" name="human_confidence" step="0.01" min="0" max="100" placeholder="0.80" />
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="num">05</span> AI diagnosis</legend>
+    <div class="row two-thirds">
+      <label>
+        <span>Diagnosis</span>
+        <input type="text" name="ai_diagnosis" placeholder="e.g. Tuberculosis" />
+      </label>
+      <label>
+        <span>Confidence</span>
+        <input type="number" name="ai_confidence" step="0.01" min="0" max="100" placeholder="0.62" />
+      </label>
+    </div>
+    <label>
+      <span>Model / version</span>
+      <input type="text" name="ai_model" placeholder="e.g. RadAI-v3.2 / GPT-5-med / internal-classifier-rev7" />
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="num">06</span> Confirmed diagnosis</legend>
+    <p class="hint">The ground truth used to evaluate both diagnoses.</p>
+    <div class="row two">
+      <label>
+        <span>Final diagnosis</span>
+        <input type="text" name="final_diagnosis" placeholder="e.g. Tuberculosis" />
+      </label>
+      <label>
+        <span>How confirmed</span>
+        <input type="text" name="diagnosis_source" placeholder="e.g. Sputum culture, biopsy, follow-up" />
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="num">07</span> Notes <em>(optional)</em></legend>
+    <label>
+      <textarea name="notes" rows="2" placeholder="Anything relevant — but no identifying details."></textarea>
+    </label>
+  </fieldset>
+
+  <div class="actions">
+    <button type="submit">Record case →</button>
+    <a class="ghost" href="{{ url_for('dashboard') }}">View dashboard</a>
+  </div>
+
+  <p class="legal">
+    Do not include names, dates of birth, addresses, MRNs, or any other identifiers.
+    By submitting, you confirm the case has been de-identified per your institution's policy.
+  </p>
+</form>
+
+{% endblock %}

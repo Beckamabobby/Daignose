@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Daignose — dashboard{% endblock %}
+{% block content %}
+
+<header class="hero">
+  <p class="kicker">DASHBOARD</p>
+  <h1>{{ total }} case{{ '' if total == 1 else 's' }} recorded</h1>
+  <p class="lede">
+    Diagnostic accuracy of human vs. AI diagnoses, grouped by patient race.
+    Accuracy = exact match against the recorded final diagnosis.
+  </p>
+</header>
+
+{% if summary %}
+<table class="summary">
+  <thead>
+    <tr>
+      <th>Patient race</th>
+      <th class="num">n</th>
+      <th class="num">Human accuracy</th>
+      <th class="num">AI accuracy</th>
+      <th class="num">Δ (AI − Human)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in summary %}
+    <tr>
+      <td>{{ r.race }}</td>
+      <td class="num">{{ r.n }}</td>
+      <td class="num">
+        {% if r.human_accuracy is not none %}
+          {{ '%.1f'|format(r.human_accuracy) }}%
+          <span class="sub">({{ r.human_n }})</span>
+        {% else %}—{% endif %}
+      </td>
+      <td class="num">
+        {% if r.ai_accuracy is not none %}
+          {{ '%.1f'|format(r.ai_accuracy) }}%
+          <span class="sub">({{ r.ai_n }})</span>
+        {% else %}—{% endif %}
+      </td>
+      <td class="num">
+        {% if r.human_accuracy is not none and r.ai_accuracy is not none %}
+          {% set delta = r.ai_accuracy - r.human_accuracy %}
+          <span class="{% if delta > 0 %}pos{% elif delta < 0 %}neg{% endif %}">
+            {{ '%+.1f'|format(delta) }}
+          </span>
+        {% else %}—{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No cases recorded yet.</p>
+{% endif %}
+
+<div class="actions">
+  <a href="{{ url_for('export_csv', key=key) }}"><button type="button">Download CSV →</button></a>
+  <a class="ghost" href="{{ url_for('index') }}">Submit a case</a>
+</div>
+
+<p class="legal">
+  Exact-match accuracy is a coarse proxy — it depends on diagnoses being written
+  consistently. For real analysis, export the CSV and apply your own normalization,
+  ICD-10 mapping, or chart review against the symptom narrative.
+</p>
+
+{% endblock %}

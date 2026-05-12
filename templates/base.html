@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Daignose{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --paper: #f6f3ec;
+      --paper-2: #eee9dd;
+      --rule: #1a1a1a;
+      --muted: #6b6660;
+      --accent: #b13b2a;
+      --pos: #2f6e3a;
+      --neg: #b13b2a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 56px 32px 96px;
+    }
+
+    /* ---- Header / hero ---- */
+    .hero { margin-bottom: 56px; border-bottom: 1px solid var(--rule); padding-bottom: 40px; }
+    .kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      margin: 0 0 16px;
+      color: var(--accent);
+    }
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 44px;
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      margin: 0 0 24px;
+    }
+    .lede {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      line-height: 1.5;
+      max-width: 60ch;
+      color: var(--ink);
+      margin: 0 0 16px;
+    }
+    .count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* ---- Form ---- */
+    .form fieldset {
+      border: none;
+      border-top: 1px solid var(--rule);
+      padding: 28px 0 8px;
+      margin: 0;
+    }
+    .form legend {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 500;
+      padding: 0;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+    .form legend em { font-style: italic; color: var(--muted); font-weight: 400; font-size: 16px; }
+    .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+    .hint {
+      font-size: 14px;
+      color: var(--muted);
+      margin: -8px 0 16px;
+      max-width: 60ch;
+    }
+    .row { display: grid; gap: 18px; margin-bottom: 18px; }
+    .row.two { grid-template-columns: 1fr 1fr; }
+    .row.two-thirds { grid-template-columns: 2fr 1fr; }
+    @media (max-width: 600px) {
+      .row.two, .row.two-thirds { grid-template-columns: 1fr; }
+    }
+    label { display: block; }
+    label > span {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input[type=text], input[type=number], select, textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--ink);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 8px 0;
+      border-radius: 0;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 7px;
+    }
+    textarea { resize: vertical; line-height: 1.5; }
+    select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+                        linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+      background-position: right 0 top 18px, right 5px top 18px;
+      background-size: 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 18px;
+    }
+
+    /* ---- Buttons ---- */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin: 40px 0 24px;
+      flex-wrap: wrap;
+    }
+    button, .ghost {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button {
+      background: var(--ink);
+      color: var(--paper);
+      border: 1px solid var(--ink);
+      padding: 14px 28px;
+      border-radius: 0;
+      transition: background .15s, color .15s;
+    }
+    button:hover { background: var(--accent); border-color: var(--accent); }
+    .ghost {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 2px;
+    }
+    .ghost:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ---- Flash & legal ---- */
+    .flash {
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      border-left: 3px solid var(--pos);
+      background: var(--paper-2);
+      font-size: 14px;
+    }
+    .flash-error { border-left-color: var(--neg); }
+    .legal {
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 60ch;
+      margin-top: 24px;
+      line-height: 1.6;
+    }
+
+    /* ---- Table (dashboard) ---- */
+    table.summary {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 15px;
+    }
+    table.summary th, table.summary td {
+      text-align: left;
+      padding: 14px 12px 14px 0;
+      border-bottom: 1px solid var(--paper-2);
+    }
+    table.summary th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 400;
+      border-bottom: 1px solid var(--rule);
+    }
+    table.summary td.num, table.summary th.num {
+      font-family: 'JetBrains Mono', monospace;
+      text-align: right;
+      padding-right: 0;
+    }
+    table.summary td .sub { color: var(--muted); font-size: 12px; margin-left: 4px; }
+    .pos { color: var(--pos); }
+    .neg { color: var(--neg); }
+    .empty {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      color: var(--muted);
+      padding: 40px 0;
+    }
+
+    /* ---- Footer mark ---- */
+    .mark {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--rule);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    {% block content %}{% endblock %}
+    <div class="mark">
+      <span>DAIGNOSE</span>
+      <span>v0.1 · anonymized research instrument</span>
+    </div>
+  </div>
+</body>
+</html>
